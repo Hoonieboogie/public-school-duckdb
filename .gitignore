@@ -1,6 +1,7 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyc
 *.egg-info/
 dist/
 build/
@@ -14,7 +15,13 @@ env/
 # Environment variables
 .env
 
-# DuckDB database files
+# Data files
+data/csvs/*
+!data/csvs/.gitkeep
+data/raw_parquets/*
+!data/raw_parquets/.gitkeep
+*.csv
+*.parquet
 data/*.duckdb
 data/*.duckdb.wal
 
