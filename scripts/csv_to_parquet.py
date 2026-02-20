@@ -1,5 +1,5 @@
 """
-csv_to_parquet.py - Convert CSV files from csvs/ into Parquet in parquets/
+csv_to_parquet.py - Convert CSV files from data/csvs/ into data/raw_parquets/
 
 Usage:
     python scripts/csv_to_parquet.py
@@ -12,8 +12,8 @@ import io
 import polars as pl
 from pathlib import Path
 
-CSVS_DIR = Path(__file__).parent.parent / "csvs"
-PARQUETS_DIR = Path(__file__).parent.parent / "parquets"
+CSVS_DIR = Path(__file__).parent.parent / "data" / "csvs"
+PARQUETS_DIR = Path(__file__).parent.parent / "data" / "raw_parquets"
 
 
 def main():
@@ -46,8 +46,8 @@ def main():
         ratio = csv_mb / parquet_mb
         print(f"  -> {out_path.name} ({parquet_mb:.1f} MB, {ratio:.1f}x smaller)\n")
 
-    print("Done. Parquet files are in parquets/")
-    print("Note: parquets/ is gitignored — these files stay local only.")
+    print("Done. Parquet files are in data/raw_parquets/")
+    print("Note: data/raw_parquets/ is gitignored — these files stay local only.")
 
 
 if __name__ == "__main__":

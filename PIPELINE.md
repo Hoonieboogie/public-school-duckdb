@@ -1,7 +1,13 @@
 # Data Pipeline
 
-Raw government zip files are stored in `zips/` and tracked in GitHub.
-Generated files (`csvs/`, `parquets/`) are **gitignored** — local only.
+## Folder Structure
+
+```
+data/
+├── zips/            # Raw zip files — tracked in GitHub (upload manually)
+├── csvs/            # Extracted CSVs — local only (gitignored)
+└── raw_parquets/    # Converted Parquets — local only (gitignored)
+```
 
 ---
 
@@ -21,7 +27,7 @@ git checkout data-pipeline
 python scripts/zip_to_csv.py
 ```
 
-Extracts all zip files from `zips/` into `csvs/`:
+Extracts all zip files from `data/zips/` into `data/csvs/`:
 
 | Zip | CSV output | Size |
 |-----|-----------|------|
@@ -40,32 +46,17 @@ pip install polars pyarrow
 python scripts/csv_to_parquet.py
 ```
 
-Converts all CSVs from `csvs/` into compressed Parquet files in `parquets/`.
-Parquet uses ZSTD compression — expect **5-10x smaller** files than CSV with
-full predicate and projection pushdown for Polars and DuckDB queries.
+Converts all CSVs from `data/csvs/` into compressed Parquet files in `data/raw_parquets/`.
+Uses ZSTD compression — expect **5-10x smaller** files with full predicate and
+projection pushdown for Polars and DuckDB queries.
 
 ---
 
 ## Step 4 — Verify
 
 ```bash
-ls -lh csvs/       # ~435 MB total
-ls -lh parquets/   # significantly smaller
-```
-
----
-
-## Folder Structure
-
-```
-public-school-duckdb/
-├── zips/               # Raw zip files — tracked in GitHub
-├── csvs/               # Generated CSVs — local only (gitignored)
-├── parquets/           # Generated Parquets — local only (gitignored)
-├── scripts/
-│   ├── zip_to_csv.py       # Step 2: zips/ -> csvs/
-│   └── csv_to_parquet.py   # Step 3: csvs/ -> parquets/
-└── PIPELINE.md         # This file
+ls -lh data/csvs/          # ~435 MB total
+ls -lh data/raw_parquets/  # ~37 MB total
 ```
 
 ---
@@ -74,8 +65,8 @@ public-school-duckdb/
 
 | | CSV | Parquet |
 |--|-----|---------|
-| Size | ~435 MB | ~50-100 MB |
-| Column skipping | No | Yes |
+| Size | ~435 MB | ~37 MB |
+| Column skipping on disk | No | Yes |
 | Row group skipping | No | Yes |
 | Polars lazy scan | Full scan | Optimized I/O |
 | DuckDB query | Full scan | Optimized I/O |

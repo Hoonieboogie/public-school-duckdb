@@ -1,5 +1,5 @@
 """
-zip_to_csv.py - Extract raw zip files from zips/ into csvs/
+zip_to_csv.py - Extract raw zip files from data/zips/ into data/csvs/
 
 Usage:
     python scripts/zip_to_csv.py
@@ -8,8 +8,8 @@ Usage:
 import zipfile
 from pathlib import Path
 
-ZIPS_DIR = Path(__file__).parent.parent / "zips"
-CSVS_DIR = Path(__file__).parent.parent / "csvs"
+ZIPS_DIR = Path(__file__).parent.parent / "data" / "zips"
+CSVS_DIR = Path(__file__).parent.parent / "data" / "csvs"
 
 
 def main():
@@ -32,8 +32,8 @@ def main():
                 print(f"  -> {member.filename} ({size_mb:.1f} MB)")
         print()
 
-    print("Done. CSV files are in csvs/")
-    print("Note: csvs/ is gitignored — these files stay local only.")
+    print("Done. CSV files are in data/csvs/")
+    print("Note: data/csvs/ is gitignored — these files stay local only.")
 
 
 if __name__ == "__main__":

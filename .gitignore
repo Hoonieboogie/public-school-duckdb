@@ -1,7 +1,7 @@
-csvs/*
-!csvs/.gitkeep
-parquets/*
-!parquets/.gitkeep
+data/csvs/*
+!data/csvs/.gitkeep
+data/raw_parquets/*
+!data/raw_parquets/.gitkeep
 *.csv
 *.parquet
 __pycache__/
