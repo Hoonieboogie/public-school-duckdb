@@ -36,3 +36,4 @@ print(f"\n=== All keys ({len(body['list'][0])} fields) ===")
 for k, v in body["list"][0].items():
     print(f"  {k:30s} : {v}")
 
+print()
