@@ -8,6 +8,7 @@ Requirements:
     pip install polars pyarrow
 """
 
+import io
 import polars as pl
 from pathlib import Path
 
@@ -32,7 +33,13 @@ def main():
         csv_mb = csv_path.stat().st_size / (1024 * 1024)
         print(f"Converting: {csv_path.name} ({csv_mb:.1f} MB)")
 
-        df = pl.read_csv(csv_path, infer_schema_length=10000, ignore_errors=True)
+        try:
+            df = pl.read_csv(csv_path, infer_schema_length=10000, ignore_errors=True)
+        except pl.exceptions.ComputeError:
+            # Korean government files are often CP949/EUC-KR encoded
+            print("  (detected non-UTF-8 encoding, retrying as CP949...)")
+            text = csv_path.read_bytes().decode("cp949")
+            df = pl.read_csv(io.StringIO(text), infer_schema_length=10000, ignore_errors=True)
         df.write_parquet(out_path, compression="zstd")
 
         parquet_mb = out_path.stat().st_size / (1024 * 1024)
