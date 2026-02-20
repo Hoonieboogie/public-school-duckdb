@@ -1,9 +1,30 @@
-data/csvs/*
-!data/csvs/.gitkeep
-data/raw_parquets/*
-!data/raw_parquets/.gitkeep
-*.csv
-*.parquet
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
 .env
+
+# DuckDB database files
+data/*.duckdb
+data/*.duckdb.wal
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
