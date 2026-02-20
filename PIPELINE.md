@@ -1,7 +1,7 @@
 # Data Pipeline
 
 Raw government zip files are stored in `zips/` and tracked in GitHub.
-Generated CSV files live in `data/` and are **gitignored** (local only).
+Generated files (`csvs/`, `parquets/`) are **gitignored** — local only.
 
 ---
 
@@ -15,13 +15,13 @@ git checkout data-pipeline
 
 ---
 
-## Step 2 — Unzip raw data
+## Step 2 — Zip → CSV
 
 ```bash
-python scripts/unzip_data.py
+python scripts/zip_to_csv.py
 ```
 
-This extracts all zip files from `zips/` into `data/`:
+Extracts all zip files from `zips/` into `csvs/`:
 
 | Zip | CSV output | Size |
 |-----|-----------|------|
@@ -33,13 +33,25 @@ This extracts all zip files from `zips/` into `data/`:
 
 ---
 
-## Step 3 — Verify
+## Step 3 — CSV → Parquet
 
 ```bash
-ls -lh data/
+pip install polars pyarrow
+python scripts/csv_to_parquet.py
 ```
 
-You should see 5 CSV files totalling ~435 MB.
+Converts all CSVs from `csvs/` into compressed Parquet files in `parquets/`.
+Parquet uses ZSTD compression — expect **5-10x smaller** files than CSV with
+full predicate and projection pushdown for Polars and DuckDB queries.
+
+---
+
+## Step 4 — Verify
+
+```bash
+ls -lh csvs/       # ~435 MB total
+ls -lh parquets/   # significantly smaller
+```
 
 ---
 
@@ -47,16 +59,23 @@ You should see 5 CSV files totalling ~435 MB.
 
 ```
 public-school-duckdb/
-├── zips/          # Raw zip files — tracked in GitHub
-├── data/          # Generated CSVs — local only (gitignored)
+├── zips/               # Raw zip files — tracked in GitHub
+├── csvs/               # Generated CSVs — local only (gitignored)
+├── parquets/           # Generated Parquets — local only (gitignored)
 ├── scripts/
-│   └── unzip_data.py   # Step 2 pipeline script
-└── PIPELINE.md    # This file
+│   ├── zip_to_csv.py       # Step 2: zips/ -> csvs/
+│   └── csv_to_parquet.py   # Step 3: csvs/ -> parquets/
+└── PIPELINE.md         # This file
 ```
 
 ---
 
-## Future Steps (planned)
+## Why Parquet over CSV?
 
-- **CSV → Parquet**: Convert CSVs to Parquet for faster querying with Polars/DuckDB
-- **Parquet → DuckDB**: Load into DuckDB for KPI analysis
+| | CSV | Parquet |
+|--|-----|---------|
+| Size | ~435 MB | ~50-100 MB |
+| Column skipping | No | Yes |
+| Row group skipping | No | Yes |
+| Polars lazy scan | Full scan | Optimized I/O |
+| DuckDB query | Full scan | Optimized I/O |
