@@ -28,3 +28,7 @@ data/*.duckdb.wal
 # OS
 .DS_Store
 Thumbs.db
+
+# Raw files
+csvs/
+raw_parquets/
